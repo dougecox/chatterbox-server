@@ -37,19 +37,22 @@ var requestHandler = function(request, response) {
   var statusCode = 200;
   
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;                                            
+  var headers = defaultCorsHeaders;  
   
-  if (request.url !== '/classes/messages') {
-    response.writeHead(404, headers);
-    response.end();
-  }
-  if (request.method === 'GET') {
-    response.end(JSON.stringify(serverData));
-  } else if (request.method === 'POST'){
+  if (request.method === 'GET' && request.url === '/classes/messages') {
+    statusCode = 200;
+  } 
+  if (request.method === 'POST' && request.url === '/classes/messages'){
     request.on('data', function(data) {
-      serverData.results.push(JSON.parse(data.toString('utf-8')));
+      serverData.results.push((data.toString('utf-8')));
     });
     statusCode = 201;
+  }
+  if (request.method === 'OPTIONS') {
+    statusCode = 200;
+  } else if (request.url !== '/classes/messages') {
+    response.writeHead(404, headers);
+    response.end();
   }
 
   // Tell the client we are sending them plain text.
@@ -89,3 +92,32 @@ var defaultCorsHeaders = {
 };
 
 module.exports.requestHandler = requestHandler;
+
+
+// var qs = require('querystring');
+
+//  console.log('Serving request type ' + request.method + ' for url ' + request.url);
+//   //console.log(request.headers['access-control-request-method']);
+//   console.log( 'qs parsing', qs.parse(request.url) )
+//   let urlParse = qs.parse(request.url)
+//   // The outgoing status.
+//   var statusCode = 200;
+  
+//   // See the note below about CORS headers.
+//   var headers = defaultCorsHeaders;                                            
+  
+//   if (request.method === 'GET' && Object.keys(urlParse).includes('/classes/messages')){
+//     response.end(JSON.stringify(serverData));
+//   } 
+//   if (request.method === 'POST' && Object.keys(urlParse).includes('/classes/messages')){
+//     request.on('data', function(data) {
+//       serverData.results.push(JSON.parse(data.toString('utf-8')));
+//     });
+//     statusCode = 201;
+//   }
+//   if (request.method === 'OPTIONS') {
+//     statusCode = 200;
+//   } else if (request.url !== '/classes/messages') {
+//     response.writeHead(404, headers);
+//     response.end();
+//   }

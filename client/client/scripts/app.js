@@ -2,7 +2,7 @@ var app = {
 
   //TODO: The current 'handleUsernameClick' function just toggles the class 'friend'
   //to all messages sent by the user
-  server: 'http://127.0.0.1:3000',
+  server: 'http://127.0.0.1:3000/classes/messages',
   username: 'anonymous',
   roomname: 'lobby',
   lastMessageId: 0,
@@ -25,7 +25,7 @@ var app = {
     app.$roomSelect.on('change', app.handleRoomChange);
 
     // Fetch previous messages
-    app.startSpinner();
+    // app.startSpinner();
     app.fetch(false);
 
     // Poll for new messages
@@ -35,7 +35,7 @@ var app = {
   },
 
   send: function(message) {
-    app.startSpinner();
+    // app.startSpinner();
 
     // POST the message to the server
     $.ajax({
@@ -59,8 +59,9 @@ var app = {
     $.ajax({
       url: app.server,
       type: 'GET',
-      data: { order: '-createdAt' },
+      // data: { order: '-createdAt' },
       contentType: 'application/json',
+      // dataType: 'JSON',
       success: function(data) {
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
@@ -96,7 +97,7 @@ var app = {
   renderMessages: function(messages, animate) {
     // Clear existing messages`
     app.clearMessages();
-    app.stopSpinner();
+    // app.stopSpinner();
     if (Array.isArray(messages)) {
       // Add all fetched messages that are in our current room
       messages
@@ -221,15 +222,17 @@ var app = {
 
     // Stop the form from submitting
     event.preventDefault();
-  },
-
-  startSpinner: function() {
-    $('.spinner img').show();
-    $('form input[type=submit]').attr('disabled', 'true');
-  },
-
-  stopSpinner: function() {
-    $('.spinner img').fadeOut('fast');
-    $('form input[type=submit]').attr('disabled', null);
   }
+
+
+
+//   startSpinner: function() {
+//     $('.spinner img').show();
+//     $('form input[type=submit]').attr('disabled', 'true');
+//   },
+
+//   stopSpinner: function() {
+//     $('.spinner img').fadeOut('fast');
+//     $('form input[type=submit]').attr('disabled', null);
+//   }
 };
