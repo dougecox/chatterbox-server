@@ -11,13 +11,11 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-
+var serverData = {
+  results: []
+};
 
 var requestHandler = function(request, response) {
-
-  var serverData = {
-    results: []
-  };
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -41,10 +39,6 @@ var requestHandler = function(request, response) {
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;                                            
   
-  // var serverData = {
-  //   results: []
-  // };
-  
   if (request.url !== '/classes/messages') {
     response.writeHead(404, headers);
     response.end();
@@ -53,7 +47,7 @@ var requestHandler = function(request, response) {
     response.end(JSON.stringify(serverData));
   } else if (request.method === 'POST'){
     request.on('data', function(data) {
-      serverData.results.push(data);
+      serverData.results.push(JSON.parse(data.toString('utf-8')));
     });
     statusCode = 201;
   }
