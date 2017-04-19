@@ -38,13 +38,17 @@ var requestHandler = function(request, response) {
   
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;  
-  
+  var completeData = '';
   if (request.method === 'GET' && request.url === '/classes/messages') {
     statusCode = 200;
   } 
   if (request.method === 'POST' && request.url === '/classes/messages'){
     request.on('data', function(data) {
-      serverData.results.push((data.toString('utf-8')));
+      completeData += data;
+    })
+    request.on('end', function() {
+      console.log(completeData.toString())
+      serverData.results.push(JSON.parse(completeData))
     });
     statusCode = 201;
   }
@@ -72,6 +76,8 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
+  console.log('@end results:', serverData.results)
+  
   response.end(JSON.stringify(serverData));
 };
 
@@ -93,31 +99,3 @@ var defaultCorsHeaders = {
 
 module.exports.requestHandler = requestHandler;
 
-
-// var qs = require('querystring');
-
-//  console.log('Serving request type ' + request.method + ' for url ' + request.url);
-//   //console.log(request.headers['access-control-request-method']);
-//   console.log( 'qs parsing', qs.parse(request.url) )
-//   let urlParse = qs.parse(request.url)
-//   // The outgoing status.
-//   var statusCode = 200;
-  
-//   // See the note below about CORS headers.
-//   var headers = defaultCorsHeaders;                                            
-  
-//   if (request.method === 'GET' && Object.keys(urlParse).includes('/classes/messages')){
-//     response.end(JSON.stringify(serverData));
-//   } 
-//   if (request.method === 'POST' && Object.keys(urlParse).includes('/classes/messages')){
-//     request.on('data', function(data) {
-//       serverData.results.push(JSON.parse(data.toString('utf-8')));
-//     });
-//     statusCode = 201;
-//   }
-//   if (request.method === 'OPTIONS') {
-//     statusCode = 200;
-//   } else if (request.url !== '/classes/messages') {
-//     response.writeHead(404, headers);
-//     response.end();
-//   }

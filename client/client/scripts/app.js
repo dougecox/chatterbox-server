@@ -38,11 +38,13 @@ var app = {
     // app.startSpinner();
 
     // POST the message to the server
+
     $.ajax({
       url: app.server,
       type: 'POST',
-      data: message,
+      data: JSON.stringify(message),
       success: function (data) {
+            
         // Clear messages input
         app.$message.val('');
 
@@ -62,8 +64,15 @@ var app = {
       // data: { order: '-createdAt' },
       contentType: 'application/json',
       // dataType: 'JSON',
+
       success: function(data) {
         // Don't bother if we have nothing to work with
+        console.log('fetch:', JSON.parse(data))
+        data = JSON.parse(data);
+        
+        console.log('results after parse ', data)
+        console.log('checking new reulst from submit', data.results)
+        app.renderMessages(data.results, animate);
         if (!data.results || !data.results.length) { return; }
 
         // Store messages for caching later
@@ -217,7 +226,7 @@ var app = {
       text: app.$message.val(),
       roomname: app.roomname || 'lobby'
     };
-
+    console.log('from handleSubmit', message);
     app.send(message);
 
     // Stop the form from submitting
